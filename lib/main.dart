@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '/ui/home_page.dart';
-import '/ui/login_page.dart';
-import '/ui/movie_list_page.dart';
+import 'package:gubuk_cinema/ui/home_page.dart';
+import 'package:gubuk_cinema/ui/login_page.dart';
+import 'package:gubuk_cinema/ui/movie_list_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Movie App',
+      title: 'Gubuk Cinema',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
