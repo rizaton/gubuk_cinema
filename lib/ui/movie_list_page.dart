@@ -31,7 +31,7 @@ class MovieListPage extends StatelessWidget {
                                       SizedBox(
                                         height: 260,
                                         width: 160,
-                                        child: Image.asset("assets/indigo.jpg", fit: BoxFit.fill,),
+                                        child: Image.asset("../lib/assets/indigo.jpg", fit: BoxFit.fill,),
                                       ),
                                     ],
                                   ),
@@ -52,7 +52,7 @@ class MovieListPage extends StatelessWidget {
                                       SizedBox(
                                         height: 260,
                                         width: 160,
-                                        child: Image.asset("assets/indigo.jpg", fit: BoxFit.fill,),
+                                        child: Image.asset("../lib/assets/indigo.jpg", fit: BoxFit.fill,),
                                       ),
                                     ],
                                   ),
