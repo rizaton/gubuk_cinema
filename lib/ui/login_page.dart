@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/ui/movie_list_page.dart';
 
-
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
   const LoginPage({super.key});
@@ -18,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
         radius: 48.0,
-        child: Image.asset('../lib/assets/logo.png'),
+        child: Image.asset('assets/logo.png'),
       ),
     );
 

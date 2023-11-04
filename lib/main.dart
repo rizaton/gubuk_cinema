@@ -1,27 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/ui/home_page.dart';
-import 'package:gubuk_cinema/ui/loginPage/login_page.dart';
+import 'package:gubuk_cinema/ui/login_page.dart';
 import 'package:gubuk_cinema/ui/movie_list_page.dart';
-// import 'package:gubuk_cinema/models/app_logo.dart';
 
 void main() => runApp(MyApp());
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Gubuk Cinema',
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(
-//         primaryColor: Colors.black,
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//       ),
-//       home: const LoginPage(),
-//     );
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
