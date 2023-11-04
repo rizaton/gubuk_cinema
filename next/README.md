@@ -1,3 +1,3 @@
 # Gubuk Cinema API
 
-[API Website LINK](https://gubukcinema.vercel.app/)
+[API Website Link](https://gubukcinema.vercel.app/)
