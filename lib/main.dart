@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/ui/home_page.dart';
-import 'package:gubuk_cinema/ui/loginPage/login_page.dart';
-import 'package:gubuk_cinema/ui/movie_list_page.dart';
+// import 'package:gubuk_cinema/ui/home_page.dart';
+// import 'package:gubuk_cinema/ui/loginPage/login_page.dart';
+// import 'package:gubuk_cinema/ui/movie_list_page.dart';
 // import 'package:gubuk_cinema/models/app_logo.dart';
+// import 'package:gubuk_cinema/ui/bookmarkPage/bookmark_page.dart';
+// import 'package:gubuk_cinema/ui/homePage/home_page.dart';
+import 'package:gubuk_cinema/ui/loginPage/login_page.dart';
+// import 'package:gubuk_cinema/ui/loginPage/registration_page.dart';
+// import 'package:gubuk_cinema/ui/movieOverview/movie_overview.dart';
+import 'package:gubuk_cinema/ui/profilePage/profile_page.dart';
+// import 'package:gubuk_cinema/ui/searchPage/search_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,8 +34,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => const LoginPage(),
-    HomePage.tag: (context) => const HomePage(),
-    MovieListPage.tag: (context) => const MovieListPage(),
+    ProfilePage.tag:(context) => const ProfilePage(),
   };
   //const MyApp({super.key});
 
@@ -42,7 +48,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito'
       ),
-      home: const LoginPage(),
+      home: const ProfilePage(),
       builder: (context, child){
         return ScrollConfiguration(behavior: MyBehavior(), child: child!);
       },
