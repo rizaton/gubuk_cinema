@@ -30,6 +30,17 @@ class _ProfilePageState extends State<ProfilePage> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              color: Colors.white,
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       drawer: Drawer(
         child: ListView(
