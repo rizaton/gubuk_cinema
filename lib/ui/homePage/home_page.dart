@@ -2,22 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/ui/loginPage/login_page.dart';
 import 'package:gubuk_cinema/ui/loginPage/registration_page.dart';
 
+import 'package:gubuk_cinema/models/http_api.dart';
+import 'dart:convert';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Future<List> dataFetch() async {
+      var uri = await getAPIMovies();
+      List<dynamic> jsonData = json.decode(uri);
+      return jsonData;
+    }
+
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
           const SliverAppBar(
             backgroundColor: Colors.black,
             expandedHeight: 70.0,
-            floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                'Gubuk Cinema',
+                'Gubuk Cinema ',
                 style: TextStyle(
                   color: Colors.grey,
                 ),
@@ -25,52 +33,115 @@ class HomePage extends StatelessWidget {
               centerTitle: true,
             ),
           ),
+          SliverPersistentHeader(
+            delegate: MySliverAppBarDelegate(
+              minHeight: 40,
+              maxHeight: 40,
+              child: Container(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Flexible(
+                      flex: 14,
+                      child: Container(
+                        color: Colors.white,
+                        child: const TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Cari Judul Film...',
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 5,
+                      fit: FlexFit.loose,
+                      child: ElevatedButton(
+                        style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.grey),
+                        ),
+                        onPressed: () {},
+                        child: const Text('Cari'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            pinned: true,
+          ),
           SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisSpacing: 4.0,
+              mainAxisSpacing: 4.0,
+              childAspectRatio: 0.5,
               crossAxisCount: 2,
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                return SizedBox(
-                  height: 400,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailPage(index),
+                return FutureBuilder(
+                  future: dataFetch(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+
+                      final movieLinks = [];
+                      final movieTitles = [];
+                      final moviePopularities = [];
+                      final List? jsonData = snapshot.data;
+
+                      for (var links in jsonData!) {
+                        String movieLink = links['poster_path'];
+                        String movieTitle = links['original_title'];
+                        double moviePopularity = links['popularity'];
+                        movieLinks.add(movieLink);
+                        movieTitles.add(movieTitle);
+                        moviePopularities.add(moviePopularity);
+                      }
+                      return InkWell(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(3)),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPage(index),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              flex: 5,
+                              child: Image.network(
+                                movieLinks[index],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Container(
+                                color: Colors.white,
+                                child: ListTile(
+                                  title: Text(movieTitles[index],
+                                      style: const TextStyle(
+                                          color: Colors.black)),
+                                  subtitle: Text('Popularity: ${moviePopularities[index]}',
+                                      style: const TextStyle(color: Colors.black)),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       );
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: double.infinity,
-                          width: double.infinity,
-                          color: Colors.blue,
-                          child: Image.asset(
-                            '../lib/assets/indigo.jpg',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Container(
-                            color: Colors.white,
-                            child: ListTile(
-                              title: Text('Deskripsi Item $index',
-                                  style: const TextStyle(color: Colors.black)),
-                              subtitle: const Text('Rating: 4.5',
-                                  style: TextStyle(color: Colors.black)),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                    }
+                    return const CircularProgressIndicator();
+                  },
                 );
               },
-              childCount: 20,
+              childCount: 10,
             ),
           ),
         ],
@@ -122,7 +193,6 @@ class DetailPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text('Detail Item $index'),
-
       ),
       body: Center(
         child: Text('Detail dari item $index'),
@@ -131,123 +201,31 @@ class DetailPage extends StatelessWidget {
   }
 }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: ListView(
-  //       scrollDirection: Axis.vertical,
-  //       children: [
-  //         Column(
-  //           children: [
-  //             SizedBox(
-  //               width: double.infinity,
-  //               child: Stack(
-  //                 children: [
-  //                   Container(
-  //                     width: double.infinity,
-  //                     height: 70,
-  //                     color: const Color.fromARGB(255, 0, 0, 0),
-  //                     child: Stack(
-  //                       children: [
-  //                         Align(
-  //                           alignment: Alignment.center,
-  //                           child: Container(
-  //                             width: 165,
-  //                             height: 40,
-  //                             decoration: const BoxDecoration(
-  //                                 color: Color.fromARGB(255, 170, 0, 0)),
-  //                           ),
-  //                         ),
-  //                         Positioned(
-  //                           top: 15,
-  //                           left: 20,
-  //                           child: Container(
-  //                             width: 40,
-  //                             height: 40,
-  //                             decoration: const BoxDecoration(
-  //                                 color: Color.fromARGB(255, 180, 112, 112)),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: double.infinity,
-  //               child: Stack(
-  //                 children: [
-  //                   Container(
-  //                     width: double.infinity,
-  //                     height: 50,
-  //                     decoration: const BoxDecoration(color: Color(0xFFD9D9D9)),
-  //                     child: Stack(
-  //                       children: [
-  //                         Align(
-  //                           alignment: Alignment.center,
-  //                           child: Container(
-  //                             width: 300,
-  //                             height: 40,
-  //                             decoration: const BoxDecoration(
-  //                                 color: Color.fromARGB(255, 116, 116, 116)),
-  //                           ),
-  //                         ),
-  //                         Align(
-  //                           alignment: Alignment.center,
-  //                           child: Container(
-  //                             width: 290,
-  //                             height: 30,
-  //                             decoration: const BoxDecoration(
-  //                                 color: Color.fromARGB(255, 185, 185, 185)),
-  //                           ),
-  //                         ),
-  //                         Positioned(
-  //                           top: 10,
-  //                           left: 310,
-  //                           child: Container(
-  //                             width: 30,
-  //                             height: 30,
-  //                             decoration: const BoxDecoration(
-  //                                 color: Color.fromARGB(255, 101, 100, 100)),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: double.infinity,
-  //               child: Stack(
-  //                 children: [
-  //                   Container(
-  //                     width: double.infinity,
-  //                     height: 70,
-  //                     color: const Color.fromARGB(255, 116, 116, 116),
-  //                     child: Stack(
-  //                       children: [
-  //                         Positioned(
-  //                           top: 15,
-  //                           left: 20,
-  //                           child: Container(
-  //                             width: 40,
-  //                             height: 40,
-  //                             decoration: const BoxDecoration(
-  //                                 color: Color.fromARGB(255, 145, 144, 144)),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-// }
+class MySliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  MySliverAppBarDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
