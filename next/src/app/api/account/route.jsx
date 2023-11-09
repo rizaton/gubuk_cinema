@@ -9,31 +9,35 @@ export async function GET(Request){
     if(params.get("username") !== null){
         const username = params.get("username")
 
-        const account = await db
-            .collection("account")
-            .find({})
-            .sort({ metacritic: -1 })
-            .limit(0)
-            .toArray();
-
-        const result = []
-
-        for(let i = 0; i < account.length; i++){
-            if(account[i].username.toLowerCase().includes(username) === true){
-                result.push(account[i])
+        if(username !== null){
+            const account = await db
+                .collection("account")
+                .findOne({username: username})
+            if(account?.username !== undefined){
+                return Response.json( account,
+                    {
+                        status: 200,
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                        },
+                    }
+                )
+            }
+            else{
+                return Response.json( "Username tidak Ada!",
+                    {
+                        status: 200,
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                        },
+                    }
+                )
             }
         }
-
-        return Response.json( result,
-            {
-                status: 200,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                },
-            }
-        )
     }
     else{
         const result = await db
