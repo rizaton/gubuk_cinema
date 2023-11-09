@@ -1,6 +1,10 @@
+import 'package:gubuk_cinema/models/env.dart';
 import 'package:http/http.dart' as http;
 getAPIAccount() {
-  var uri = Uri.https('gubukcinema.vercel.app', '/api/account');
+  var uri = Uri.https(
+    envAPI('acc')[0],
+    envAPI('acc')[1]
+    );
   dataReturn() async {
     final response = await http.get(
       uri,
@@ -14,7 +18,10 @@ getAPIAccount() {
   return dataReturn();
 }
 getAPIMovies() {
-  var uri = Uri.https('gubukcinema.vercel.app', '/api/movies');
+  var uri = Uri.https(
+    envAPI('acc')[0],
+    envAPI('acc')[1]
+    );
   dataReturn() async {
     final response = await http.get(
       uri,
@@ -29,7 +36,10 @@ getAPIMovies() {
 }
 
 postAPIAccount(String body) {
-  var uri = Uri.https('gubukcinema.vercel.app', '/api/account'); //'/api/account'
+  var uri = Uri.https(
+    envAPI('acc')[0],
+    envAPI('acc')[1]
+    ); //'/api/account'
   dataReturn() async {
     final response = await http.post(
       uri,
@@ -44,7 +54,10 @@ postAPIAccount(String body) {
   return dataReturn();
 }
 postAPIMovies(String body) {
-  var uri = Uri.https('gubukcinema.vercel.app', '/api/movies'); //'/api/account'
+  var uri = Uri.https(
+    envAPI('acc')[0],
+    envAPI('acc')[1]
+    );
   dataReturn() async {
     final response = await http.post(
       uri,
@@ -59,7 +72,10 @@ postAPIMovies(String body) {
   return dataReturn();
 }
 putAPIAccount(String body) {
-  var uri = Uri.https('gubukcinema.vercel.app', '/api/account');
+  var uri = Uri.https(
+    envAPI('acc')[0],
+    envAPI('acc')[1]
+    );
   dataReturn() async {
     final response = await http.put(
       uri,
