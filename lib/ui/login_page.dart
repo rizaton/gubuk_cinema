@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/ui/movie_list_page.dart';
-
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
