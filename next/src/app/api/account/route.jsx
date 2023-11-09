@@ -4,13 +4,22 @@ import { ObjectId } from 'bson'
 export async function GET(req, res){
     const db = await client.db("gubukcinema")
     
-    const account = await db
+    const result = await db
             .collection("account")
             .find({})
             .sort({ metacritic: -1 })
             .limit(0)
             .toArray();
-    return Response.json({data : account})
+    return Response.json( result,
+        {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+        }
+    )
 }
 
 export async function POST(Request) {
@@ -34,12 +43,16 @@ export async function POST(Request) {
         console.error(e)
     }
 
-    const resdata = {
-        status: 200,
-        result: data,
-        message: "Successful"
-    }
-    return Response.json({result : resdata})
+    return Response.json('Successfuly!',
+        {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+        }
+    )
 }
 
 
@@ -49,7 +62,6 @@ export async function PUT(Request){
     const params = Request.nextUrl.searchParams;
     const id = params.get("id")
 
-    console.log(typeof data.username)
     const db = await client.db("gubukcinema")
     if(data.username !== undefined){
         await db.collection("account").updateOne(
@@ -112,18 +124,34 @@ export async function PUT(Request){
         )
     }
 
-    return Response.json({data})
+    return Response.json('Successfuly!',
+        {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+        }
+    )
 }
 
 export async function DELETE(Request){
     const data = await Request.json()
-
-    console.log(data.id)
     const db = await client.db("gubukcinema")
     await db.collection("account").deleteOne(
         {
             _id: new ObjectId(data.id)
         }
     )
-    return Response.json({data})
+    return Response.json('Successfuly!',
+    {
+        status: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+    }
+)
 }

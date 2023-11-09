@@ -16,15 +16,24 @@ export async function GET(Request){
             .limit(0)
             .toArray();
 
-        let data = []
+        let result = []
 
         for(let i = 0; i < movies.length; i++){
             if(movies[i].title.toLowerCase().includes(title) === true){
-                data.push(movies[i])
+                result.push(movies[i])
             }
         }
         
-        return Response.json({data})
+        return Response.json( result,
+        {
+            status: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+        }
+    )
         
     }
     else if(params.get("id") !== null){
@@ -36,24 +45,42 @@ export async function GET(Request){
             .limit(0)
             .toArray();
 
-        let data = []
+        let result = []
 
         for(let i = 0; i < movies.length; i++){
             if(movies[i].id === id){
-                data.push(movies[i])
+                result.push(movies[i])
             }
         }
 
-        return Response.json({data})
+        return Response.json( result,
+            {
+                status: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                },
+            }
+        )
     }
     else{
-        const movies = await db
+        const result = await db
             .collection("movies")
             .find({})
             .sort({ metacritic: -1 })
             .limit(0)
             .toArray();
-        
-            return Response.json({result: movies})
+
+            return Response.json( result,
+                {
+                    status: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                    },
+                }
+            )
     }
 }
