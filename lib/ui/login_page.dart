@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/ui/movie_list_page.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -10,86 +9,88 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final logo = Hero(
-      tag: 'hero',
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 48.0,
-        child: Image.asset('assets/logo.png'),
-      ),
-    );
-
-    final email = TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      autofocus: false,
-      initialValue: '12345@gmail.com',
-      decoration: InputDecoration(
-        hintText: 'Email',
-        contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-      ),
-    );
-    final password = TextFormField(
-      autofocus: false,
-      initialValue: 'some password',
-      obscureText: true,
-      decoration: InputDecoration(
-        hintText: 'Password',
-        contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-      ),
-    );
-
-    final loginButton = Padding(
-      padding: const EdgeInsets.only(top: 10.0, left: 5.0, right: 5.0, bottom: 20.0),
-      child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.lightBlue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                side: const BorderSide(color: Colors.blue),
-              ),
-              elevation: 10,
-              minimumSize: const Size(200, 50)),
-          onPressed: () {
-            Navigator.of(context).pushNamed(MovieListPage.tag);
-          },
-          icon: const Icon(Icons.arrow_right_alt),
-                    label: const Text(
-                      "LOG IN",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    )
-      ));
-  
-    final forgotLabel = TextButton(
-      child: const Text(
-        'Forgot password?',
-        style: TextStyle(color: Colors.black54),
-      ),
-      onPressed: () {},
-    );
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-          children: <Widget>[
-            logo,
-            const SizedBox(height: 48.0),
-            email,
-            const SizedBox(height: 8.0),
-            password,
-            const SizedBox(height: 24.0),
-            loginButton,
-            forgotLabel
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text("Gubuk Cinema"),
       ),
-    );
+      body: SingleChildScrollView(
+        child: 
+          Center(
+            child: Column(
+              children: [
+                Container(
+                  height: 30,
+                ),
+                Container(
+                  child: Image.asset("assets/pb.png", height: 150, width: 150,),
+                ),
+                SizedBox(height: 30,),
+                Container(
+                  child: Text("LOGIN", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
+                ),
+                Container(
+                  child: Column(
+                    children: [
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                        child: TextFormField( 
+                          controller: usernameController,
+                          decoration: const InputDecoration(
+                          labelText: 'Username'
+                        )),
+                      ),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                        child: TextFormField( 
+                          controller: passwordController,
+                          decoration: const InputDecoration(
+                          labelText: 'Password'
+                        )),
+                      ),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.lightBlue,
+                            shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            side: const BorderSide(color: Colors.blue),
+                            ),
+                            elevation: 10,
+                            minimumSize: const Size(200, 50)
+                          ),
+                          onPressed: (){},
+                          child: const Text("Login"),
+                        ),
+                      )
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 10.0),
+                        child: TextButton(
+                          child: const Text("Lupa Password?"),
+                          onPressed: () {
+                            
+                          },
+                        )
+                      ),
+                    )
+                    ]
+                  )
+                )
+                ],
+                  ),
+                )
+        )
+      );
   }
 }
