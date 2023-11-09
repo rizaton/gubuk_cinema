@@ -9,6 +9,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
                         child: TextFormField( 
                           controller: usernameController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                           labelText: 'Username'
                         )),
                       ),
@@ -48,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
                         child: TextFormField( 
                           controller: passwordController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                           labelText: 'Password'
                         )),
                       ),
@@ -57,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
                         child: ElevatedButton(
-                          child: const Text("Login"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.lightBlue,
                             shape: RoundedRectangleBorder(
@@ -65,9 +66,10 @@ class _LoginPageState extends State<LoginPage> {
                             side: const BorderSide(color: Colors.blue),
                             ),
                             elevation: 10,
-                            minimumSize: Size(200, 50)
+                            minimumSize: const Size(200, 50)
                           ),
                           onPressed: (){},
+                          child: const Text("Login"),
                         ),
                       )
                     ),
