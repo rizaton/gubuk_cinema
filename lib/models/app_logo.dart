@@ -8,7 +8,7 @@ class ApplicationLogo extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Image.asset('logo.png', package: 'assets'),
+        Image.asset('../lib/assets/gubukcinemalogo.png'),
       ],
     );
   }
