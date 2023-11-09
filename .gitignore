@@ -16,6 +16,13 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# Each Branch
+/lib/ui/loginPage/
+/lib/ui/movieOverview/
+/lib/ui/loginPage/
+/lib/ui/searchPage/
+/lib/ui/bookmarkPage/
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
