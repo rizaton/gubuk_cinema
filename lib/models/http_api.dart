@@ -1,5 +1,6 @@
 import 'package:gubuk_cinema/models/env.dart';
 import 'package:http/http.dart' as http;
+
 getAPIAccount() {
   var uri = Uri.https(
     envAPI('acc')[0],
@@ -19,9 +20,9 @@ getAPIAccount() {
 }
 getAPIMovies() {
   var uri = Uri.https(
-    envAPI('acc')[0],
-    envAPI('acc')[1]
-    );
+    envAPI('mov')[0],
+    envAPI('mov')[1]
+  );
   dataReturn() async {
     final response = await http.get(
       uri,
@@ -55,8 +56,8 @@ postAPIAccount(String body) {
 }
 postAPIMovies(String body) {
   var uri = Uri.https(
-    envAPI('acc')[0],
-    envAPI('acc')[1]
+    envAPI('mov')[0],
+    envAPI('mov')[1]
     );
   dataReturn() async {
     final response = await http.post(
