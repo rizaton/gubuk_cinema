@@ -87,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: 50,
                 color: Colors.blue,
                 child: Image.asset(
-                  '../lib/assets/yukino.png',
+                  'lib/assets/yukino.png',
                   // fit: BoxFit.cover,
                 ),
               ),

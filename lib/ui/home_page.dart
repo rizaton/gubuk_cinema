@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/ui/login_page.dart';
-import 'package:gubuk_cinema/ui/registration_page.dart';
-
+// import 'package:gubuk_cinema/models/drawer.dart';
+import 'package:gubuk_cinema/models/drawer_login.dart';
 import 'package:gubuk_cinema/models/http_api.dart';
 import 'dart:convert';
+
+import 'movie_overview.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,90 +16,104 @@ class HomePage extends StatelessWidget {
       List<dynamic> jsonData = json.decode(uri);
       return jsonData;
     }
+  TextEditingController searchController = TextEditingController();
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          const SliverAppBar(
-            backgroundColor: Colors.black,
-            expandedHeight: 70.0,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                'Gubuk Cinema ',
-                style: TextStyle(
-                  color: Colors.grey,
+    return FutureBuilder(
+      future: dataFetch(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final movieLinks = [];
+          final movieTitles = [];
+          final movieRatings = [];
+          final movieOverviews = [];
+          final moviePopularities = [];
+          final List? jsonData = snapshot.data;
+
+          for (var links in jsonData!) {
+            String movieLink = links['poster_path'];
+            String movieTitle = links['original_title'];
+            String movieRating = "${links['vote_average']}";
+            String movieOverview = links['overview'];
+            double moviePopularity = links['popularity'];
+
+
+            movieLinks.add(movieLink);
+            movieTitles.add(movieTitle);
+            movieRatings.add(movieRating);
+            movieOverviews.add(movieOverview);
+            moviePopularities.add(moviePopularity);
+          }
+          return Scaffold(
+            body: CustomScrollView(
+              slivers: <Widget>[
+                const SliverAppBar(
+                  backgroundColor: Colors.black,
+                  expandedHeight: 70.0,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Text(
+                      'Gubuk Cinema ',
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    centerTitle: true,
+                  ),
                 ),
-              ),
-              centerTitle: true,
-            ),
-          ),
-          SliverPersistentHeader(
-            delegate: MySliverAppBarDelegate(
-              minHeight: 40,
-              maxHeight: 40,
-              child: Container(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      flex: 14,
-                      child: Container(
-                        color: Colors.white,
-                        child: const TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Cari Judul Film...',
-                            prefixIcon: Icon(Icons.search),
+                SliverPersistentHeader(
+                  delegate: MySliverAppBarDelegate(
+                    minHeight: 40,
+                    maxHeight: 40,
+                    child: Container(
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Flexible(
+                            flex: 14,
+                            child: Container(
+                              color: Colors.white,
+                              child: TextFormField(
+                                controller: searchController,
+                                enabled: true,
+                                decoration: const InputDecoration(
+                                  hintText: 'Cari Judul Film...',
+                                  prefixIcon: Icon(Icons.search),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          Flexible(
+                            flex: 5,
+                            fit: FlexFit.loose,
+                            child: ElevatedButton(
+                              style: const ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.grey),
+                              ),
+                              onPressed: () {
+                                postAPIMovies(
+                                  ""
+                                );
+                              },
+                              child: const Text('Cari'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Flexible(
-                      flex: 5,
-                      fit: FlexFit.loose,
-                      child: ElevatedButton(
-                        style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.grey),
-                        ),
-                        onPressed: () {},
-                        child: const Text('Cari'),
-                      ),
-                    ),
-                  ],
+                  ),
+                  pinned: true,
                 ),
-              ),
-            ),
-            pinned: true,
-          ),
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 4.0,
-              childAspectRatio: 0.5,
-              crossAxisCount: 2,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return FutureBuilder(
-                  future: dataFetch(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-
-                      final movieLinks = [];
-                      final movieTitles = [];
-                      final moviePopularities = [];
-                      final List? jsonData = snapshot.data;
-
-                      for (var links in jsonData!) {
-                        String movieLink = links['poster_path'];
-                        String movieTitle = links['original_title'];
-                        double moviePopularity = links['popularity'];
-                        movieLinks.add(movieLink);
-                        movieTitles.add(movieTitle);
-                        moviePopularities.add(moviePopularity);
-                      }
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 4.0,
+                    mainAxisSpacing: 4.0,
+                    childAspectRatio: 0.5,
+                    crossAxisCount: 2,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
                       return InkWell(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(3)),
@@ -106,7 +121,13 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailPage(index),
+                              builder: (context) => OverviewMovie(
+                                linkMovie: movieLinks[index],
+                                titleMovie: movieTitles[index],
+                                ratingMovie: movieRatings[index],
+                                overviewMovie: movieOverviews[index],
+                                popularityMovie: moviePopularities[index],
+                              ),
                             ),
                           );
                         },
@@ -126,58 +147,29 @@ class HomePage extends StatelessWidget {
                                 color: Colors.white,
                                 child: ListTile(
                                   title: Text(movieTitles[index],
-                                      style: const TextStyle(
-                                          color: Colors.black)),
-                                  subtitle: Text('Popularity: ${moviePopularities[index]}',
-                                      style: const TextStyle(color: Colors.black)),
+                                      style:
+                                          const TextStyle(color: Colors.black)),
+                                  subtitle: Text(
+                                      'Popularity: ${moviePopularities[index]}',
+                                      style:
+                                          const TextStyle(color: Colors.black)),
                                 ),
                               ),
                             ),
                           ],
                         ),
                       );
-                    }
-                    return const CircularProgressIndicator();
-                  },
-                );
-              },
-              childCount: 10,
-            ),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              title: const Text("Log in"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
+                    },
+                    childCount: 14,
                   ),
-                );
-              },
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text("Register"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Register(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Tentang Aplikasi"),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+            drawer:  const DrawerLogged(),
+          );
+        }
+        return const CircularProgressIndicator();
+      },
     );
   }
 }
