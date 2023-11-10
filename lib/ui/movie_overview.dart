@@ -7,13 +7,16 @@ class OverviewMovie extends StatefulWidget {
   final String overviewMovie;
   final double popularityMovie;
 
+  final List<dynamic> genreMovie;
+
   const OverviewMovie({
     super.key, 
     required this.linkMovie, 
     required this.titleMovie, 
     required this.ratingMovie, 
     required this.overviewMovie, 
-    required this.popularityMovie,
+    required this.popularityMovie, 
+    required this.genreMovie,
     });
 
   @override
@@ -25,18 +28,6 @@ class _OverviewMovieState extends State<OverviewMovie> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   // leading: IconButton(
-      //   //   icon: const Icon(Icons.arrow_back_sharp),
-      //   //   color: Colors.white,
-      //   //   iconSize: 30,
-      //   //   onPressed: () {
-      //   //     Navigator.of(context)
-      //   //         .pop();
-      //   //   },
-      //   // ),
-      // ),
       body: 
       CustomScrollView(
         slivers: <Widget>[
@@ -49,6 +40,19 @@ class _OverviewMovieState extends State<OverviewMovie> {
                 widget.linkMovie, 
                 fit: BoxFit.fitWidth,
               ),
+            ),
+            leading: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromARGB(64, 0, 0, 0)
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  },
+                icon: const Icon(Icons.arrow_back),
+                color: Colors.white,
+                ),
             ),
           ),
           SliverToBoxAdapter(
@@ -108,44 +112,33 @@ class _OverviewMovieState extends State<OverviewMovie> {
                     ),
                   ),
                   Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.black, // Warna latar belakang badge
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: List.generate(widget.genreMovie.length,
+                      (index) => Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                              color: Colors.black,
                               borderRadius:
-                                  BorderRadius.circular(5), // Bentuk badge
-                            ),
-                            child: const Text(
-                              "Horror",
-                              style: TextStyle(
-                                color: Colors.white, // Warna teks pada badge
+                                  BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                widget.genreMovie[index]['name'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
+                            const SizedBox(
                             width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.black, // Warna latar belakang badge
-                              borderRadius:
-                                  BorderRadius.circular(5), // Bentuk badge
                             ),
-                            child: const Text(
-                              "Comedy",
-                              style: TextStyle(
-                                color: Colors.white, // Warna teks pada badge
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       // Aksi yang akan diambil ketika tombol ditekan

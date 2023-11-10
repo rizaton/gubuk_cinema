@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-// import 'package:gubuk_cinema/models/drawer.dart';
-import 'package:gubuk_cinema/models/drawer_login.dart';
+import 'package:gubuk_cinema/models/drawer.dart';
+
 import 'package:gubuk_cinema/models/http_api.dart';
 import 'dart:convert';
 
 import 'movie_overview.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final String loggedOn;
+
+  const HomePage({
+    super.key,
+    required this.loggedOn
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +32,10 @@ class HomePage extends StatelessWidget {
           final movieRatings = [];
           final movieOverviews = [];
           final moviePopularities = [];
+
+          final movieGenres = [];
+
+
           final List? jsonData = snapshot.data;
 
           for (var links in jsonData!) {
@@ -35,6 +44,7 @@ class HomePage extends StatelessWidget {
             String movieRating = "${links['vote_average']}";
             String movieOverview = links['overview'];
             double moviePopularity = links['popularity'];
+            List<dynamic> movieGenre = links['genres'];
 
 
             movieLinks.add(movieLink);
@@ -42,6 +52,7 @@ class HomePage extends StatelessWidget {
             movieRatings.add(movieRating);
             movieOverviews.add(movieOverview);
             moviePopularities.add(moviePopularity);
+            movieGenres.add(movieGenre);
           }
           return Scaffold(
             body: CustomScrollView(
@@ -127,6 +138,7 @@ class HomePage extends StatelessWidget {
                                 ratingMovie: movieRatings[index],
                                 overviewMovie: movieOverviews[index],
                                 popularityMovie: moviePopularities[index],
+                                genreMovie: movieGenres[index],
                               ),
                             ),
                           );
@@ -165,30 +177,11 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            drawer:  const DrawerLogged(),
+            drawer:  DrawerSide(loggedOn: loggedOn),
           );
         }
         return const CircularProgressIndicator();
       },
-    );
-  }
-}
-
-class DetailPage extends StatelessWidget {
-  final int index;
-
-  const DetailPage(this.index, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text('Detail Item $index'),
-      ),
-      body: Center(
-        child: Text('Detail dari item $index'),
-      ),
     );
   }
 }
