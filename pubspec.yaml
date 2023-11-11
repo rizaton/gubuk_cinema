@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.3
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -18,5 +19,5 @@ dev_dependencies:
 
 flutter:
   assets:
-      - 'lib/assets/'
+    - 'lib/assets/'
   uses-material-design: true

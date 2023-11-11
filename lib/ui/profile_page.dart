@@ -3,15 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/ui/login_page.dart';
 import 'package:gubuk_cinema/ui/registration_page.dart';
 
-class ProfilePage extends StatefulWidget {
-  static String tag = 'profile-page';
+class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  Widget build(BuildContext context) {
+    return const DetailProfilePage();
+  }
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class DetailProfilePage extends StatefulWidget {
+  const DetailProfilePage({super.key});
+
+  // Future<void> _readData() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     var counter = prefs.getStringList('user');
+  //     testingString.add(counter);
+  //   });
+  // }
+
+  @override
+  State<DetailProfilePage> createState() => _DetailProfilePageState();
+}
+
+class _DetailProfilePageState extends State<DetailProfilePage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController oldPasswordController = TextEditingController();

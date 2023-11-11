@@ -1,21 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/ui/login_page.dart';
+import 'package:gubuk_cinema/ui/profile_page.dart';
 import 'package:gubuk_cinema/ui/registration_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerSide extends StatefulWidget {
-  final String loggedOn;
-
-  const DrawerSide({super.key, required this.loggedOn});
+  const DrawerSide({super.key});
 
   @override
   State<DrawerSide> createState() => _DrawerSideState();
 }
 
 class _DrawerSideState extends State<DrawerSide> {
+  String status = 'no_data';
+  String name = '';
+
+  @override
+  void initState(){
+    super.initState();
+    _statusLogged();
+  }
+
+  Future<void> _statusLogged() async {
+    final prefs = await SharedPreferences.getInstance();
+    final nameState = prefs.getStringList('user')?[1];
+    if (prefs.get('logged') == 'true') {
+      setState(() {
+        status = 'logged';
+        name = nameState!;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.loggedOn == '1') {
-      return const _DrawerLogged();
+    if (status == 'logged') {
+      return _DrawerLogged(name);
     } else {
       return const _DrawerNoLogged();
     }
@@ -68,15 +88,15 @@ class _DrawerNoLogged extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
-            title: Text('Tentang Aplikasi'),
+            leading: const Icon(Icons.info),
+            title: const Text('Tentang Aplikasi'),
             onTap: () {
               // Handle User Settings action
             },
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Logout'),
             onTap: () {
               // Handle Logout action
             },
@@ -88,7 +108,23 @@ class _DrawerNoLogged extends StatelessWidget {
 }
 
 class _DrawerLogged extends StatelessWidget {
-  const _DrawerLogged();
+  final String name;
+
+  const _DrawerLogged(this.name);
+
+  Future<void> _loggedOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('user',[
+        '_ids',
+        'name',
+        'unam',
+        'pass',
+        'mail',
+      ]
+    );
+    await prefs.setStringList('bookmark',[]);
+    await prefs.setString('logged', 'false');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +145,7 @@ class _DrawerLogged extends StatelessWidget {
                 Image.asset(
                   'lib/assets/gubukcinemalogo.png',
                 ),
-                Text('Welcome KAL', style: TextStyle(color: Colors.white)),
+                Text('Welcome $name', style: const TextStyle(color: Colors.white)),
                 const SizedBox(
                   height: 20,
                 ),
@@ -120,28 +156,43 @@ class _DrawerLogged extends StatelessWidget {
             leading: const Icon(Icons.info),
             title: const Text('About Application'),
             onTap: () {
-              // Handle About Application action
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const AppInfoPage()
+              //   )
+              // );
             },
           ),
           ListTile(
             leading: const Icon(Icons.bookmark),
             title: const Text('Bookmark'),
             onTap: () {
-              // Handle Bookmark action
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => const BookmarkPage()
+            //     )
+            //   );
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('User Settings'),
             onTap: () {
-              // Handle User Settings action
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfilePage()
+                )
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
-              // String loggedOut = '1';
+              _loggedOut();
             },
           ),
         ],
