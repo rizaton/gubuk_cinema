@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gubuk_cinema/models/http_api.dart';
+import 'package:gubuk_cinema/ui/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OverviewMovie extends StatefulWidget {
+  final String idMovie;
   final String linkMovie;
   final String titleMovie;
   final String ratingMovie;
@@ -10,26 +16,84 @@ class OverviewMovie extends StatefulWidget {
   final List<dynamic> genreMovie;
 
   const OverviewMovie({
-    super.key, 
-    required this.linkMovie, 
-    required this.titleMovie, 
-    required this.ratingMovie, 
-    required this.overviewMovie, 
-    required this.popularityMovie, 
-    required this.genreMovie,
-    });
+    super.key,
+    required this.linkMovie,
+    required this.titleMovie,
+    required this.ratingMovie,
+    required this.overviewMovie,
+    required this.popularityMovie,
+    required this.genreMovie, 
+    required this.idMovie,
+  });
 
   @override
   State<OverviewMovie> createState() => _OverviewMovieState();
 }
 
 class _OverviewMovieState extends State<OverviewMovie> {
+  String status = 'no_data';
+
+  @override
+  void initState(){
+    super.initState();
+    _statusLogged();
+  }
+
+  Future<void> _statusLogged() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.get('logged') == 'true') {
+      setState(() {
+        status = 'logged';
+      });
+    }
+  }
+
+  Future<void> _addBook(movieID) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> bookData = prefs.getStringList('bookmark')!;
+
+    if (bookData.contains(movieID)) {
+    } else {
+      bookData.add(movieID);
+
+      final String userIDlog = prefs.getStringList('user')![0];
+      final String fullname = prefs.getStringList('user')![1];
+      final String username = prefs.getStringList('user')![2];
+      final String password = prefs.getStringList('user')![3];
+      final String email = prefs.getStringList('user')![4];
+      
+
+      final paramsIDUser = {
+        'id': userIDlog,
+      };
+
+      final Map<String, dynamic> userData = {
+        'username': username,
+        'fullname': fullname,
+        'email': email,
+        'password': password,
+        'bookmark': bookData,
+      };
+      final String jsonData = jsonEncode(userData);
+      print(jsonData);
+      await putAPIAccount(jsonData, paramsIDUser);
+    }
+  }
+
+  void _showToast(BuildContext context, String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      body: 
-      CustomScrollView(
+      body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
             backgroundColor: Colors.transparent,
@@ -37,22 +101,20 @@ class _OverviewMovieState extends State<OverviewMovie> {
             pinned: false,
             flexibleSpace: FlexibleSpaceBar(
               background: Image.network(
-                widget.linkMovie, 
+                widget.linkMovie,
                 fit: BoxFit.fitWidth,
               ),
             ),
             leading: Container(
               decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color.fromARGB(64, 0, 0, 0)
-              ),
+                  shape: BoxShape.circle, color: Color.fromARGB(64, 0, 0, 0)),
               child: IconButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  },
+                },
                 icon: const Icon(Icons.arrow_back),
                 color: Colors.white,
-                ),
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -76,7 +138,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         padding: EdgeInsets.only(
                             top: 10,
                             bottom: 10,
-                            right: 5), // Tambahkan padding ke ikon
+                            right: 5),
                         child: Icon(
                           Icons.star,
                           color: Colors.yellow,
@@ -90,7 +152,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         padding: EdgeInsets.only(
                             top: 10,
                             bottom: 10,
-                            right: 5), // Tambahkan padding ke ikon
+                            right: 5),
                         child: Icon(
                           Icons.people,
                           color: Colors.black,
@@ -100,29 +162,27 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         '${widget.popularityMovie}', // Teks Anda
                         style: const TextStyle(fontSize: 16),
                       ),
-
                     ],
                   ),
                   SizedBox(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                          widget.overviewMovie
-                      ),
+                      child: Text(widget.overviewMovie),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Row(
-                      children: List.generate(widget.genreMovie.length,
-                      (index) => Row(
+                      children: List.generate(
+                        widget.genreMovie.length,
+                        (index) => Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius:
-                                  BorderRadius.circular(5),
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
                                 widget.genreMovie[index]['name'],
@@ -132,7 +192,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                               ),
                             ),
                             const SizedBox(
-                            width: 10,
+                              width: 10,
                             ),
                           ],
                         ),
@@ -141,22 +201,34 @@ class _OverviewMovieState extends State<OverviewMovie> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Aksi yang akan diambil ketika tombol ditekan
+                      if (status == 'logged') {
+                        _addBook(widget.idMovie);
+                      } else if (status == 'no_data'){
+                        _showToast(context, 'Silahkan melakukan login terlebih dahulu');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage()
+                            )
+                        );
+                      } else {
+                        _showToast(context, 'Telah terjadi kesalahan');
+                      }
+                      
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.black, // Warna latar belakang tombol
-                      onPrimary: Colors.white, // Warna teks pada tombol
+                      foregroundColor: Colors.white, backgroundColor: Colors.black,
                       padding:
-                          EdgeInsets.symmetric(vertical: 20), // Padding tombol
+                          const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
-                            6), // Bentuk tombol (bulat dengan radius 8)
+                            6),
                       ),
                     ),
-                    child: Container(
+                    child: const SizedBox(
                       width:
                           500, // Mengatur lebar konten tombol menjadi 200 piksel
-                      child: const Center(
+                      child: Center(
                         child: Text('Bookmark', textAlign: TextAlign.center),
                       ),
                     ), // Teks di dalam tombol

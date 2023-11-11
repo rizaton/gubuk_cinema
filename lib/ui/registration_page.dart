@@ -31,75 +31,86 @@ class _RegisterState extends State<Register> {
     };
 
     final String jsonData = jsonEncode(userData);
-
     postAPIAccount(jsonData);
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
-          title: Text('Halaman Pendaftaran'),
+          backgroundColor: Colors.black,
+          title: const Text(
+            'Halaman Pendaftaran',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(50),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Daftar Akun',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
+              const Text(
                 'Isi informasi berikut untuk mendaftar:',
                 style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Username'),
                 controller: usernameController,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Nama'),
+                decoration: const InputDecoration(labelText: 'Nama'),
                 controller: fullnameController,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 controller: emailController,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 controller: passwordController,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Ulangi Password'),
+                decoration: const InputDecoration(labelText: 'Ulangi Password'),
                 obscureText: true,
                 controller: reenterPasswordController,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   Checkbox(value: true, onChanged: (value) {}),
-                  Text('Saya setuju dengan Persyaratan dan Ketentuan'),
+                  const Text('Saya setuju dengan Persyaratan dan Ketentuan'),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
+                  elevation: 10,
+                  minimumSize: const Size(200, 50)
+                ),
                 onPressed: () {
                   registerUser();
                 },
-                child: Text('Daftar'),
+                child: const Text('Daftar'),
               ),
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

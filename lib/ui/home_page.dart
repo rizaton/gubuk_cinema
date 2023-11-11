@@ -7,46 +7,43 @@ import 'dart:convert';
 import 'movie_overview.dart';
 
 class HomePage extends StatelessWidget {
-  final String loggedOn;
+  const HomePage({super.key,});
 
-  const HomePage({
-    super.key,
-    required this.loggedOn
-    });
+  Future<List> _dataFetch() async {
+    var uri = await getAPIMovies();
+    List<dynamic> jsonData = json.decode(uri);
+    return jsonData;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future<List> dataFetch() async {
-      var uri = await getAPIMovies();
-      List<dynamic> jsonData = json.decode(uri);
-      return jsonData;
-    }
   TextEditingController searchController = TextEditingController();
 
     return FutureBuilder(
-      future: dataFetch(),
+      future: _dataFetch(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          final List? jsonData = snapshot.data;
+
+          final movieIDs = []; 
           final movieLinks = [];
           final movieTitles = [];
           final movieRatings = [];
           final movieOverviews = [];
           final moviePopularities = [];
-
           final movieGenres = [];
 
-
-          final List? jsonData = snapshot.data;
 
           for (var links in jsonData!) {
             String movieLink = links['poster_path'];
             String movieTitle = links['original_title'];
             String movieRating = "${links['vote_average']}";
             String movieOverview = links['overview'];
+            String movieID = "${links['_id']}";
             double moviePopularity = links['popularity'];
             List<dynamic> movieGenre = links['genres'];
 
-
+            movieIDs.add(movieID);
             movieLinks.add(movieLink);
             movieTitles.add(movieTitle);
             movieRatings.add(movieRating);
@@ -65,7 +62,7 @@ class HomePage extends StatelessWidget {
                     title: Text(
                       'Gubuk Cinema ',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.white,
                       ),
                     ),
                     centerTitle: true,
@@ -133,6 +130,7 @@ class HomePage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => OverviewMovie(
+                                idMovie: movieIDs[index],
                                 linkMovie: movieLinks[index],
                                 titleMovie: movieTitles[index],
                                 ratingMovie: movieRatings[index],
@@ -177,7 +175,7 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            drawer:  DrawerSide(loggedOn: loggedOn),
+            drawer: const DrawerSide(),
           );
         }
         return const CircularProgressIndicator();
