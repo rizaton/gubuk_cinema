@@ -120,17 +120,30 @@ export async function PUT(Request){
     const id = params.get("id")
 
     const db = await client.db("gubukcinema")
+    const noted = []
+
     if(data.username !== undefined){
-        await db.collection("account").updateOne(
-            {
-                _id: new ObjectId(id)
-            },
-            {
-                $set: {
-                    "username": data.username,
+        const getusername = await db.collection("account")
+            .findOne(
+                {
+                    username : data.username 
                 }
-            }
-        )
+            )
+        if(getusername !== null){
+            noted.push("Username Tidak Tersedia")
+        }
+        else{     
+            await db.collection("account").updateOne(
+                {
+                    _id: new ObjectId(id)
+                },
+                {
+                    $set: {
+                        "username": data.username,
+                    }
+                }
+            )
+        }
     }
     if(data.fullname !== undefined){
         await db.collection("account").updateOne(
@@ -181,7 +194,7 @@ export async function PUT(Request){
         )
     }
 
-    return Response.json('Successfuly!',
+    return Response.json({message: 'Successfuly!', error : noted},
         {
             status: 200,
             headers: {
