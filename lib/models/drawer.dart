@@ -94,13 +94,6 @@ class _DrawerNoLogged extends StatelessWidget {
               // Handle User Settings action
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
-            onTap: () {
-              // Handle Logout action
-            },
-          ),
         ],
       ),
     );
@@ -193,6 +186,7 @@ class _DrawerLogged extends StatelessWidget {
             title: const Text('Logout'),
             onTap: () {
               _loggedOut();
+              Navigator.pop(context);
             },
           ),
         ],

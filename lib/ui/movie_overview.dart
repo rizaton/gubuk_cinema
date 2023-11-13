@@ -48,12 +48,19 @@ class _OverviewMovieState extends State<OverviewMovie> {
     }
   }
 
-  Future<void> _addBook(movieID) async {
+  Future<void> _addBook(BuildContext context, movieID) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> bookData = prefs.getStringList('bookmark')!;
 
     if (bookData.contains(movieID)) {
-    } else {
+      // ignore: use_build_context_synchronously
+      _showToast(context, 'Data buku sudah ada dalam bookmark anda');
+      
+    } else if (!bookData.contains(movieID)){
+      
+      // ignore: use_build_context_synchronously
+      _showToast(context, 'Data berhasil ditambahkan kedalam bookmark');
+
       bookData.add(movieID);
 
       final String userIDlog = prefs.getStringList('user')![0];
@@ -75,8 +82,10 @@ class _OverviewMovieState extends State<OverviewMovie> {
         'bookmark': bookData,
       };
       final String jsonData = jsonEncode(userData);
-      print(jsonData);
-      await putAPIAccount(jsonData, paramsIDUser);
+      await postAPIAccountUpdate(jsonData, paramsIDUser);
+      await prefs.setStringList('bookmark',bookData);
+    } else {
+      print('error2');
     }
   }
 
@@ -170,31 +179,34 @@ class _OverviewMovieState extends State<OverviewMovie> {
                       child: Text(widget.overviewMovie),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      children: List.generate(
-                        widget.genreMovie.length,
-                        (index) => Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                widget.genreMovie[index]['name'],
-                                style: const TextStyle(
-                                  color: Colors.white,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        children: List.generate(
+                          widget.genreMovie.length,
+                          (index) => Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  widget.genreMovie[index]['name'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ],
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -202,7 +214,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                   ElevatedButton(
                     onPressed: () {
                       if (status == 'logged') {
-                        _addBook(widget.idMovie);
+                        _addBook(context, widget.idMovie);
                       } else if (status == 'no_data'){
                         _showToast(context, 'Silahkan melakukan login terlebih dahulu');
                         Navigator.push(
