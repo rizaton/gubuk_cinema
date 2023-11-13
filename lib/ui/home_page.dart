@@ -1,47 +1,55 @@
 import 'package:flutter/material.dart';
-// import 'package:gubuk_cinema/models/drawer.dart';
-import 'package:gubuk_cinema/models/drawer_login.dart';
+import 'package:gubuk_cinema/models/drawer.dart';
+
 import 'package:gubuk_cinema/models/http_api.dart';
 import 'dart:convert';
 
 import 'movie_overview.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key,});
+
+  Future<List> _dataFetch() async {
+    var uri = await getAPIMovies();
+    List<dynamic> jsonData = json.decode(uri);
+    return jsonData;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future<List> dataFetch() async {
-      var uri = await getAPIMovies();
-      List<dynamic> jsonData = json.decode(uri);
-      return jsonData;
-    }
   TextEditingController searchController = TextEditingController();
 
     return FutureBuilder(
-      future: dataFetch(),
+      future: _dataFetch(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          final List? jsonData = snapshot.data;
+
+          final movieIDs = []; 
           final movieLinks = [];
           final movieTitles = [];
           final movieRatings = [];
           final movieOverviews = [];
           final moviePopularities = [];
-          final List? jsonData = snapshot.data;
+          final movieGenres = [];
+
 
           for (var links in jsonData!) {
             String movieLink = links['poster_path'];
             String movieTitle = links['original_title'];
             String movieRating = "${links['vote_average']}";
             String movieOverview = links['overview'];
+            String movieID = "${links['_id']}";
             double moviePopularity = links['popularity'];
+            List<dynamic> movieGenre = links['genres'];
 
-
+            movieIDs.add(movieID);
             movieLinks.add(movieLink);
             movieTitles.add(movieTitle);
             movieRatings.add(movieRating);
             movieOverviews.add(movieOverview);
             moviePopularities.add(moviePopularity);
+            movieGenres.add(movieGenre);
           }
           return Scaffold(
             body: CustomScrollView(
@@ -54,7 +62,7 @@ class HomePage extends StatelessWidget {
                     title: Text(
                       'Gubuk Cinema ',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.white,
                       ),
                     ),
                     centerTitle: true,
@@ -122,11 +130,13 @@ class HomePage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => OverviewMovie(
+                                idMovie: movieIDs[index],
                                 linkMovie: movieLinks[index],
                                 titleMovie: movieTitles[index],
                                 ratingMovie: movieRatings[index],
                                 overviewMovie: movieOverviews[index],
                                 popularityMovie: moviePopularities[index],
+                                genreMovie: movieGenres[index],
                               ),
                             ),
                           );
@@ -165,30 +175,11 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            drawer:  const DrawerLogged(),
+            drawer: const DrawerSide(),
           );
         }
         return const CircularProgressIndicator();
       },
-    );
-  }
-}
-
-class DetailPage extends StatelessWidget {
-  final int index;
-
-  const DetailPage(this.index, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text('Detail Item $index'),
-      ),
-      body: Center(
-        child: Text('Detail dari item $index'),
-      ),
     );
   }
 }
