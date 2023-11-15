@@ -41,6 +41,7 @@ class _MyAppState extends State<MyApp> {
     );
     await prefs.setStringList('bookmark',[]);
     await prefs.setString('logged', 'false');
+    await prefs.setStringList('MovieData', []);
   }
 
   @override
