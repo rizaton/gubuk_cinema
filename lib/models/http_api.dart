@@ -56,8 +56,8 @@ postAPIAccount(String body) {
 }
 postAPIMovies(String body) {
   var uri = Uri.https(
-    envAPI('mov')[0],
-    envAPI('mov')[1]
+    envAPI('movup')[0],
+    envAPI('movup')[1]
     );
   dataReturn() async {
     final response = await http.post(
@@ -72,14 +72,14 @@ postAPIMovies(String body) {
   }
   return dataReturn();
 }
-putAPIAccount(String body, params){
+postAPIAccountUpdate(String body, params){
   var uri = Uri.https(
-    envAPI('acc')[0],
-    envAPI('acc')[1],
+    envAPI('accup')[0],
+    envAPI('accup')[1],
     params
     );
   dataReturn() async {
-    final response = await http.put(
+    final response = await http.post(
       uri,
       body: body,
       );
