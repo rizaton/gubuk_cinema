@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/models/drawer.dart';
 
 import 'package:gubuk_cinema/models/http_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'movie_overview.dart';
@@ -14,6 +15,18 @@ class HomePage extends StatelessWidget {
     List<dynamic> jsonData = json.decode(uri);
     return jsonData;
   }
+  Future<void> _sharedDataMovie(movieDatabaseIDs,movieLinks,movieTitles,movieRatings,movieOverviews,moviePopularities,movieGenres) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('MovieData', [
+      jsonEncode(movieDatabaseIDs),
+      jsonEncode(movieLinks),
+      jsonEncode(movieTitles),
+      jsonEncode(movieRatings),
+      jsonEncode(movieOverviews),
+      jsonEncode(moviePopularities),
+      jsonEncode(movieGenres),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +38,7 @@ class HomePage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           final List? jsonData = snapshot.data;
 
-          final movieIDs = []; 
+          final movieDatabaseIDs = []; 
           final movieLinks = [];
           final movieTitles = [];
           final movieRatings = [];
@@ -39,11 +52,11 @@ class HomePage extends StatelessWidget {
             String movieTitle = links['original_title'];
             String movieRating = "${links['vote_average']}";
             String movieOverview = links['overview'];
-            String movieID = "${links['_id']}";
+            String movieDatabaseID = "${links['_id']}";
             double moviePopularity = links['popularity'];
             List<dynamic> movieGenre = links['genres'];
 
-            movieIDs.add(movieID);
+            movieDatabaseIDs.add(movieDatabaseID);
             movieLinks.add(movieLink);
             movieTitles.add(movieTitle);
             movieRatings.add(movieRating);
@@ -51,6 +64,9 @@ class HomePage extends StatelessWidget {
             moviePopularities.add(moviePopularity);
             movieGenres.add(movieGenre);
           }
+          
+          _sharedDataMovie(movieDatabaseIDs, movieLinks, movieTitles, movieRatings, movieOverviews, moviePopularities, movieGenres);
+          
           return Scaffold(
             body: CustomScrollView(
               slivers: <Widget>[
@@ -130,7 +146,7 @@ class HomePage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => OverviewMovie(
-                                idMovie: movieIDs[index],
+                                idMovieDatabase: movieDatabaseIDs[index],
                                 linkMovie: movieLinks[index],
                                 titleMovie: movieTitles[index],
                                 ratingMovie: movieRatings[index],

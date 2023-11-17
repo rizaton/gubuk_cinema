@@ -6,7 +6,7 @@ import 'package:gubuk_cinema/ui/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OverviewMovie extends StatefulWidget {
-  final String idMovie;
+  final String idMovieDatabase;
   final String linkMovie;
   final String titleMovie;
   final String ratingMovie;
@@ -23,7 +23,7 @@ class OverviewMovie extends StatefulWidget {
     required this.overviewMovie,
     required this.popularityMovie,
     required this.genreMovie, 
-    required this.idMovie,
+    required this.idMovieDatabase,
   });
 
   @override
@@ -32,15 +32,26 @@ class OverviewMovie extends StatefulWidget {
 
 class _OverviewMovieState extends State<OverviewMovie> {
   String status = 'no_data';
+  late bool buttonEnabled;
 
   @override
   void initState(){
     super.initState();
+    buttonEnabled = false;
     _statusLogged();
   }
 
   Future<void> _statusLogged() async {
     final prefs = await SharedPreferences.getInstance();
+    if ((prefs.getStringList('bookmark')!).contains(widget.idMovieDatabase)) {
+      setState(() {
+        buttonEnabled = false;
+      });
+    } else {
+      setState(() {
+        buttonEnabled = true;
+      });
+    }
     if (prefs.get('logged') == 'true') {
       setState(() {
         status = 'logged';
@@ -48,27 +59,28 @@ class _OverviewMovieState extends State<OverviewMovie> {
     }
   }
 
-  Future<void> _addBook(BuildContext context, movieID) async {
+  Future<void> _addBook(movieDatabaseID) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> bookData = prefs.getStringList('bookmark')!;
 
-    if (bookData.contains(movieID)) {
+    if (bookData.contains(movieDatabaseID)) {
       // ignore: use_build_context_synchronously
       _showToast(context, 'Data buku sudah ada dalam bookmark anda');
-      
-    } else if (!bookData.contains(movieID)){
-      
+      setState(() {
+        buttonEnabled = false;
+      });
+
+    } else if (!bookData.contains(movieDatabaseID)){
       // ignore: use_build_context_synchronously
       _showToast(context, 'Data berhasil ditambahkan kedalam bookmark');
 
-      bookData.add(movieID);
+      bookData.add(movieDatabaseID);
 
       final String userIDlog = prefs.getStringList('user')![0];
       final String fullname = prefs.getStringList('user')![1];
       final String username = prefs.getStringList('user')![2];
       final String password = prefs.getStringList('user')![3];
       final String email = prefs.getStringList('user')![4];
-      
 
       final paramsIDUser = {
         'id': userIDlog,
@@ -84,8 +96,14 @@ class _OverviewMovieState extends State<OverviewMovie> {
       final String jsonData = jsonEncode(userData);
       await postAPIAccountUpdate(jsonData, paramsIDUser);
       await prefs.setStringList('bookmark',bookData);
+      setState(() {
+        buttonEnabled = false;
+      });
+      // ignore: use_build_context_synchronously
+      build(context);
     } else {
-      print('error2');
+      // ignore: use_build_context_synchronously
+      _showToast(context, 'Terjadi kesalahan');
     }
   }
 
@@ -154,7 +172,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         ),
                       ),
                       Text(
-                        '${widget.ratingMovie} |  ', // Teks Anda
+                        '${widget.ratingMovie} |  ',
                         style: const TextStyle(fontSize: 16),
                       ),
                       const Padding(
@@ -168,7 +186,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         ),
                       ),
                       Text(
-                        '${widget.popularityMovie}', // Teks Anda
+                        '${widget.popularityMovie}',
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -212,9 +230,9 @@ class _OverviewMovieState extends State<OverviewMovie> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: buttonEnabled? () {
                       if (status == 'logged') {
-                        _addBook(context, widget.idMovie);
+                        _addBook(widget.idMovieDatabase);
                       } else if (status == 'no_data'){
                         _showToast(context, 'Silahkan melakukan login terlebih dahulu');
                         Navigator.push(
@@ -227,8 +245,9 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         _showToast(context, 'Telah terjadi kesalahan');
                       }
                       
-                    },
+                    } : null,
                     style: ElevatedButton.styleFrom(
+                      
                       foregroundColor: Colors.white, backgroundColor: Colors.black,
                       padding:
                           const EdgeInsets.symmetric(vertical: 20),
@@ -239,11 +258,11 @@ class _OverviewMovieState extends State<OverviewMovie> {
                     ),
                     child: const SizedBox(
                       width:
-                          500, // Mengatur lebar konten tombol menjadi 200 piksel
+                          500,
                       child: Center(
                         child: Text('Bookmark', textAlign: TextAlign.center),
                       ),
-                    ), // Teks di dalam tombol
+                    ),
                   ),
                 ],
               ),

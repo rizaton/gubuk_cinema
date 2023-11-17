@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gubuk_cinema/ui/bookmark_page.dart';
 import 'package:gubuk_cinema/ui/login_page.dart';
 import 'package:gubuk_cinema/ui/profile_page.dart';
 import 'package:gubuk_cinema/ui/registration_page.dart';
@@ -161,12 +162,12 @@ class _DrawerLogged extends StatelessWidget {
             leading: const Icon(Icons.bookmark),
             title: const Text('Bookmark'),
             onTap: () {
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => const BookmarkPage()
-            //     )
-            //   );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BookmarkPage()
+                )
+              );
             },
           ),
           ListTile(
