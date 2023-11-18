@@ -17,7 +17,7 @@ class _DrawerSideState extends State<DrawerSide> {
   String name = '';
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _statusLogged();
   }
@@ -108,15 +108,14 @@ class _DrawerLogged extends StatelessWidget {
 
   Future<void> _loggedOut() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('user',[
-        '_ids',
-        'name',
-        'unam',
-        'pass',
-        'mail',
-      ]
-    );
-    await prefs.setStringList('bookmark',[]);
+    await prefs.setStringList('user', [
+      '_ids',
+      'name',
+      'unam',
+      'pass',
+      'mail',
+    ]);
+    await prefs.setStringList('bookmark', []);
     await prefs.setString('logged', 'false');
   }
 
@@ -139,7 +138,8 @@ class _DrawerLogged extends StatelessWidget {
                 Image.asset(
                   'lib/assets/gubukcinemalogo.png',
                 ),
-                Text('Welcome $name', style: const TextStyle(color: Colors.white)),
+                Text('Welcome $name',
+                    style: const TextStyle(color: Colors.white)),
                 const SizedBox(
                   height: 20,
                 ),
@@ -162,24 +162,16 @@ class _DrawerLogged extends StatelessWidget {
             leading: const Icon(Icons.bookmark),
             title: const Text('Bookmark'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const BookmarkPage()
-                )
-              );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => BookmarkPage()));
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('User Settings'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePage()
-                )
-              );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()));
             },
           ),
           ListTile(
