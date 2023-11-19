@@ -17,7 +17,7 @@ export async function POST(Request) {
                 })
             if(account !== null){
                 return Response.json( {
-                   result : account
+                    message: "Data is Exist!"
                 },
                     {
                         status: 200,
