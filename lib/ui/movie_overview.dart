@@ -22,7 +22,7 @@ class OverviewMovie extends StatefulWidget {
     required this.ratingMovie,
     required this.overviewMovie,
     required this.popularityMovie,
-    required this.genreMovie, 
+    required this.genreMovie,
     required this.idMovieDatabase,
   });
 
@@ -35,7 +35,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
   late bool buttonEnabled;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     buttonEnabled = false;
     _statusLogged();
@@ -69,8 +69,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
       setState(() {
         buttonEnabled = false;
       });
-
-    } else if (!bookData.contains(movieDatabaseID)){
+    } else if (!bookData.contains(movieDatabaseID)) {
       // ignore: use_build_context_synchronously
       _showToast(context, 'Data berhasil ditambahkan kedalam bookmark');
 
@@ -95,7 +94,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
       };
       final String jsonData = jsonEncode(userData);
       await postAPIAccountUpdate(jsonData, paramsIDUser);
-      await prefs.setStringList('bookmark',bookData);
+      await prefs.setStringList('bookmark', bookData);
       setState(() {
         buttonEnabled = false;
       });
@@ -162,10 +161,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                   Row(
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(
-                            top: 10,
-                            bottom: 10,
-                            right: 5),
+                        padding: EdgeInsets.only(top: 10, bottom: 10, right: 5),
                         child: Icon(
                           Icons.star,
                           color: Colors.yellow,
@@ -176,10 +172,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         style: const TextStyle(fontSize: 16),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(
-                            top: 10,
-                            bottom: 10,
-                            right: 5),
+                        padding: EdgeInsets.only(top: 10, bottom: 10, right: 5),
                         child: Icon(
                           Icons.people,
                           color: Colors.black,
@@ -201,64 +194,56 @@ class _OverviewMovieState extends State<OverviewMovie> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 10, // Jarak horizontal antara elemen
+                        runSpacing: 10, // Jarak vertikal antara baris
                         children: List.generate(
                           widget.genreMovie.length,
-                          (index) => Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Text(
-                                  widget.genreMovie[index]['name'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          (index) => Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              widget.genreMovie[index]['name'],
+                              style: const TextStyle(
+                                color: Colors.white,
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: buttonEnabled? () {
-                      if (status == 'logged') {
-                        _addBook(widget.idMovieDatabase);
-                      } else if (status == 'no_data'){
-                        _showToast(context, 'Silahkan melakukan login terlebih dahulu');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage()
-                            )
-                        );
-                      } else {
-                        _showToast(context, 'Telah terjadi kesalahan');
-                      }
-                      
-                    } : null,
+                    onPressed: buttonEnabled
+                        ? () {
+                            if (status == 'logged') {
+                              _addBook(widget.idMovieDatabase);
+                            } else if (status == 'no_data') {
+                              _showToast(context,
+                                  'Silahkan melakukan login terlebih dahulu');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const LoginPage()));
+                            } else {
+                              _showToast(context, 'Telah terjadi kesalahan');
+                            }
+                          }
+                        : null,
                     style: ElevatedButton.styleFrom(
-                      
-                      foregroundColor: Colors.white, backgroundColor: Colors.black,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 20),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            6),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                     ),
                     child: const SizedBox(
-                      width:
-                          500,
+                      width: 500,
                       child: Center(
                         child: Text('Bookmark', textAlign: TextAlign.center),
                       ),

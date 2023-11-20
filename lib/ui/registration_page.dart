@@ -37,80 +37,83 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text(
-            'Halaman Pendaftaran',
-            style: TextStyle(
-              color: Colors.white,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: const Text(
+          'Halaman Pendaftaran',
+          style: TextStyle(
+            color: Colors.white,
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(50),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Daftar Akun',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(50),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Daftar Akun',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Text(
+              'Isi informasi berikut untuk mendaftar:',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Username'),
+              controller: usernameController,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Nama'),
+              controller: fullnameController,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Email'),
+              controller: emailController,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+              controller: passwordController,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Ulangi Password'),
+              obscureText: true,
+              controller: reenterPasswordController,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Checkbox(value: true, onChanged: (value) {}),
+                Container(
+                  margin: const EdgeInsets.only(right: 8.0),
+                  child: const Text(
+                      'Saya setuju dengan Persyaratan dan Ketentuan'),
                 ),
-              ),
-              const Text(
-                'Isi informasi berikut untuk mendaftar:',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Username'),
-                controller: usernameController,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Nama'),
-                controller: fullnameController,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Email'),
-                controller: emailController,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                controller: passwordController,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Ulangi Password'),
-                obscureText: true,
-                controller: reenterPasswordController,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Checkbox(value: true, onChanged: (value) {}),
-                  const Text('Saya setuju dengan Persyaratan dan Ketentuan'),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
+              ],
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     side: const BorderSide(color: Colors.grey),
                   ),
                   elevation: 10,
-                  minimumSize: const Size(200, 50)
-                ),
-                onPressed: () {
-                  registerUser();
-                },
-                child: const Text('Daftar'),
-              ),
-            ],
-          ),
+                  minimumSize: const Size(200, 50)),
+              onPressed: () {
+                registerUser();
+              },
+              child: const Text('Daftar'),
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }
