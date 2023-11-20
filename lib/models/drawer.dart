@@ -75,7 +75,7 @@ class _DrawerNoLogged extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
+                MaterialPageRoute(builder: (context) => const Login()),
               );
             },
           ),

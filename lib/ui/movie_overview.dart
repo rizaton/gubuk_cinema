@@ -220,7 +220,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const LoginPage()
+                            builder: (context) => const Login()
                             )
                         );
                       } else {
