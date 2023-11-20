@@ -6,7 +6,7 @@ import 'package:gubuk_cinema/ui/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OverviewMovie extends StatefulWidget {
-  final String idMovie;
+  final String idMovieDatabase;
   final String linkMovie;
   final String titleMovie;
   final String ratingMovie;
@@ -22,8 +22,8 @@ class OverviewMovie extends StatefulWidget {
     required this.ratingMovie,
     required this.overviewMovie,
     required this.popularityMovie,
-    required this.genreMovie, 
-    required this.idMovie,
+    required this.genreMovie,
+    required this.idMovieDatabase,
   });
 
   @override
@@ -32,15 +32,26 @@ class OverviewMovie extends StatefulWidget {
 
 class _OverviewMovieState extends State<OverviewMovie> {
   String status = 'no_data';
+  late bool buttonEnabled;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
+    buttonEnabled = false;
     _statusLogged();
   }
 
   Future<void> _statusLogged() async {
     final prefs = await SharedPreferences.getInstance();
+    if ((prefs.getStringList('bookmark')!).contains(widget.idMovieDatabase)) {
+      setState(() {
+        buttonEnabled = false;
+      });
+    } else {
+      setState(() {
+        buttonEnabled = true;
+      });
+    }
     if (prefs.get('logged') == 'true') {
       setState(() {
         status = 'logged';
@@ -48,27 +59,27 @@ class _OverviewMovieState extends State<OverviewMovie> {
     }
   }
 
-  Future<void> _addBook(BuildContext context, movieID) async {
+  Future<void> _addBook(movieDatabaseID) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> bookData = prefs.getStringList('bookmark')!;
 
-    if (bookData.contains(movieID)) {
+    if (bookData.contains(movieDatabaseID)) {
       // ignore: use_build_context_synchronously
       _showToast(context, 'Data buku sudah ada dalam bookmark anda');
-      
-    } else if (!bookData.contains(movieID)){
-      
+      setState(() {
+        buttonEnabled = false;
+      });
+    } else if (!bookData.contains(movieDatabaseID)) {
       // ignore: use_build_context_synchronously
       _showToast(context, 'Data berhasil ditambahkan kedalam bookmark');
 
-      bookData.add(movieID);
+      bookData.add(movieDatabaseID);
 
       final String userIDlog = prefs.getStringList('user')![0];
       final String fullname = prefs.getStringList('user')![1];
       final String username = prefs.getStringList('user')![2];
       final String password = prefs.getStringList('user')![3];
       final String email = prefs.getStringList('user')![4];
-      
 
       final paramsIDUser = {
         'id': userIDlog,
@@ -83,9 +94,15 @@ class _OverviewMovieState extends State<OverviewMovie> {
       };
       final String jsonData = jsonEncode(userData);
       await postAPIAccountUpdate(jsonData, paramsIDUser);
-      await prefs.setStringList('bookmark',bookData);
+      await prefs.setStringList('bookmark', bookData);
+      setState(() {
+        buttonEnabled = false;
+      });
+      // ignore: use_build_context_synchronously
+      build(context);
     } else {
-      print('error2');
+      // ignore: use_build_context_synchronously
+      _showToast(context, 'Terjadi kesalahan');
     }
   }
 
@@ -144,31 +161,25 @@ class _OverviewMovieState extends State<OverviewMovie> {
                   Row(
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(
-                            top: 10,
-                            bottom: 10,
-                            right: 5),
+                        padding: EdgeInsets.only(top: 10, bottom: 10, right: 5),
                         child: Icon(
                           Icons.star,
                           color: Colors.yellow,
                         ),
                       ),
                       Text(
-                        '${widget.ratingMovie} |  ', // Teks Anda
+                        '${widget.ratingMovie} |  ',
                         style: const TextStyle(fontSize: 16),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(
-                            top: 10,
-                            bottom: 10,
-                            right: 5),
+                        padding: EdgeInsets.only(top: 10, bottom: 10, right: 5),
                         child: Icon(
                           Icons.people,
                           color: Colors.black,
                         ),
                       ),
                       Text(
-                        '${widget.popularityMovie}', // Teks Anda
+                        '${widget.popularityMovie}',
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -183,29 +194,24 @@ class _OverviewMovieState extends State<OverviewMovie> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 10, // Jarak horizontal antara elemen
+                        runSpacing: 10, // Jarak vertikal antara baris
                         children: List.generate(
                           widget.genreMovie.length,
-                          (index) => Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Text(
-                                  widget.genreMovie[index]['name'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          (index) => Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              widget.genreMovie[index]['name'],
+                              style: const TextStyle(
+                                color: Colors.white,
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -229,21 +235,19 @@ class _OverviewMovieState extends State<OverviewMovie> {
                       
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.black,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 20),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            6),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                     ),
                     child: const SizedBox(
-                      width:
-                          500, // Mengatur lebar konten tombol menjadi 200 piksel
+                      width: 500,
                       child: Center(
                         child: Text('Bookmark', textAlign: TextAlign.center),
                       ),
-                    ), // Teks di dalam tombol
+                    ),
                   ),
                 ],
               ),
