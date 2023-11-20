@@ -1,228 +1,196 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/models/http_api.dart';
 import 'package:gubuk_cinema/ui/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gubuk_cinema/ui/registration_page.dart';
+// import 'package:gubukcinema/ui/home_page.dart';
+// import 'package:gubukcinema/ui/registration_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class LoginPage extends StatefulWidget {
-  static String tag = 'login-page';
-  const LoginPage({super.key});
+class Login extends StatefulWidget {
+
+  const Login({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Login> createState() => _Login();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _Login extends State<Login> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  String loggedOn = '';
-  String pesan = '';
+  bool isLoading = false;
+  String errorMessage = '';
 
-  @override
-  void initState(){
-    super.initState();
-    _login();
-  }
+  Future<void> loginPostRequest() async {
+    const String apiurl = "gubukcinema.vercel.app";
 
-  Future<List> _login () async {
-    var uri = await getAPIAccount();
-    List<dynamic> dataUserJson = json.decode(uri);
-    return dataUserJson;
-  }
-
-  Future<void> _logged(
-      String ids, 
-      String fullname, 
-      String username, 
-      String password, 
-      String email,
-      List<dynamic> bookmark) async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
     
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('user',[
-        ids,
-        fullname,
-        username,
-        password,
-        email,
-      ]
-    );
-    await prefs.setString('logged', 'true');
-    if (bookmark.isEmpty) {
-      await prefs.setStringList('bookmark',
-       []
+    try{
+      http.Response response = await http.post(
+        Uri.https(apiurl, '/api/login'),
+        body: jsonEncode({
+          'username' : usernameController.text,
+          'password' : passwordController.text,
+        }),
       );
-    } else {
-      List<String> tempBookmark = [];
-      for (var i = 0; i < bookmark.length; i++) {
-        tempBookmark.add(bookmark[i]);
-      }
-      await prefs.setStringList('bookmark',
-        tempBookmark
-      );
-    }
-  }
 
-  void _showToast(BuildContext context, String message) {
-    final scaffold = ScaffoldMessenger.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+      if(response.statusCode == 200){
+        final res = json.decode(response.body);
+        //print(res['message']);
+        if(res['message'] == null){
+          final idUserDB = res['result']['idUserDB'];
+          final username = res['result']['username'];
+          final fullname = res['result']['fullname'];
+          final email = res['result']['email'];
+          final password = res['result']['password'];
+          print(res);
+          print(idUserDB);
+          print(username);
+          print(fullname);
+          print(email);
+          print(password);
+          Navigator.pushReplacement(context, 
+              MaterialPageRoute(builder: (context) => const HomePage()));
+      } else {
+          setState(() {
+            errorMessage = 'Username atau Password Salah!';
+          });
+        }
+      }
+      else{
+        print('Error: ${response.reasonPhrase}');
+        setState(() {
+          errorMessage = 'Gagal melakukan login. Silakan coba lagi.';
+        });
+        //throw Exception('Failed to load data');
+      }
+    } catch(error) {
+        print('Error: $error');
+        setState(() {
+          errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+        });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _login(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          final List? dataUserJson = snapshot.data;
-
-          var ids = [];
-          var fullname = [];
-          var username = [];
-          var password = [];
-          var email = [];
-          var bookmark = [];
-
-          for (var i = 0; i < dataUserJson!.length; i++) {
-            ids.add('${dataUserJson[i]['_id']}');
-            fullname.add(dataUserJson[i]['fullname']);
-            username.add(dataUserJson[i]['username']);
-            password.add(dataUserJson[i]['password']);
-            email.add(dataUserJson[i]['email']);
-            bookmark.add(dataUserJson[i]['bookmark']);
-          }
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.black,
-              title: const Text(
-                'Halaman Login',
-                style: TextStyle(
-                  color: Colors.white,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Gubuk Cinema"),
+      ),
+      body: SingleChildScrollView(
+        child: 
+          Center(
+            child: Column(
+              children: [
+                Container(
+                  height: 30,
                 ),
-              ),
-            ),
-            body: SingleChildScrollView(
-                child: Center(
-              child: Column(
-                children: [
-                  Container(
-                    height: 30,
+                // Image.asset("assets/pb.png", height: 150, width: 150,),
+                Image.asset(
+                  'lib/assets/gubukcinemalogo.png', height: 150, width: 150
+                ),
+                const SizedBox(height: 30,),
+                const Text("LOGIN", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
+                Column(
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                    child: _fieldUsername()
                   ),
-                  
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.asset(
-                      "lib/assets/gubukcinemalogo.png",
-                      height: 150,
-                      width: 150,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                    child: _fieldPassword()
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                    child: _tombolLogin()
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 10.0),
+                    child: _lupaPassword()
+                  ),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 10.0),
+                    child: _register()
+                  ),
+                  const SizedBox(height: 8),
+                  if (isLoading) const CircularProgressIndicator(),
+                  if (errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        errorMessage,
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  const Text(
-                    "LOGIN",
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
-                        child: TextFormField(
-                          controller: usernameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Username'
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
-                        child: TextFormField(
-                          controller: passwordController,
-                          decoration: const InputDecoration(
-                            labelText: 'Password'
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              side: const BorderSide(color: Colors.grey),
-                            ),
-                            elevation: 10,
-                            minimumSize: const Size(200, 50)
-                          ),
-                          onPressed: () {
-                            if (username.contains(usernameController.text) == false) {
-                                loggedOn = 'no_data';
-                                pesan = 'Data tidak ditemukan';
-                            } else if (password.contains(passwordController.text) == false){
-                                loggedOn = 'no_data';
-                                pesan = 'Data yang anda masukkan salah';
-                            } else if (
-                              username.contains(usernameController.text) &&
-                              password.contains(passwordController.text)
-                              ){
-                              if (
-                                username.indexOf(usernameController.text) == password.indexOf(passwordController.text)
-                              ) {
-                                _logged(
-                                  ids[username.indexOf(usernameController.text)], 
-                                  fullname[username.indexOf(usernameController.text)], 
-                                  username[username.indexOf(usernameController.text)], 
-                                  password[username.indexOf(usernameController.text)], 
-                                  email[username.indexOf(usernameController.text)], 
-                                  bookmark[username.indexOf(usernameController.text)]
-                                );
-                                loggedOn = 'logged';
-                                pesan = 'Selamat datang kembali';
-
-                              } else {
-                                  loggedOn = 'no_data';
-                                  pesan = 'Telah terjadi kesalahan';
-                              }
-                            } else {
-                                loggedOn = 'no_data';
-                                pesan = 'Telah terjadi kesalahan';
-                            }
-                            _showToast(context, pesan);
-                            if (loggedOn == 'logged') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomePage()
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text("Login"),
-                        ),
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 10.0),
-                          child: TextButton(
-                            child: const Text("Lupa Password?"),
-                            onPressed: () {},
-                          )
-                      ),
-                    ]
-                  ),
+                  ]
+                )
                 ],
-              ),
-            )
-          )
-        );
-        }
-        return const CircularProgressIndicator();
+                  ),
+                )
+        )
+      );
+  }
+
+  _fieldUsername(){
+    return TextFormField( 
+      controller: usernameController,
+      decoration: const InputDecoration(
+        labelText: 'Username'
+    ));
+  }
+
+  _fieldPassword(){
+    return TextFormField( 
+      controller: passwordController,
+      decoration: const InputDecoration(
+        labelText: 'Password'
+    ));
+  }
+
+  _tombolLogin(){
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.lightBlue,
+        shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+        side: const BorderSide(color: Colors.blue),
+        ),
+        elevation: 10,
+        minimumSize: const Size(200, 50)
+      ),
+      onPressed: (){
+        loginPostRequest();
       },
+      child: const Text("Login")
+    );
+  }
+
+  _lupaPassword(){
+    return TextButton(
+      child: const Text("Lupa Password?"),
+      onPressed: () {
+        
+    },
+    );
+  }
+
+  _register(){
+    return TextButton(
+      child: const Text("Belum punya akun? Daftar Disini"),
+      onPressed: () {
+        Navigator.pushReplacement(context, 
+          MaterialPageRoute(builder: (context) => const Register()));
+    },
     );
   }
 }

@@ -218,22 +218,22 @@ class _OverviewMovieState extends State<OverviewMovie> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: buttonEnabled
-                        ? () {
-                            if (status == 'logged') {
-                              _addBook(widget.idMovieDatabase);
-                            } else if (status == 'no_data') {
-                              _showToast(context,
-                                  'Silahkan melakukan login terlebih dahulu');
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const LoginPage()));
-                            } else {
-                              _showToast(context, 'Telah terjadi kesalahan');
-                            }
-                          }
-                        : null,
+                    onPressed: () {
+                      if (status == 'logged') {
+                        _addBook(context, widget.idMovie);
+                      } else if (status == 'no_data'){
+                        _showToast(context, 'Silahkan melakukan login terlebih dahulu');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Login()
+                            )
+                        );
+                      } else {
+                        _showToast(context, 'Telah terjadi kesalahan');
+                      }
+                      
+                    },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.black,

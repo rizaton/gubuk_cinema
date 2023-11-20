@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:gubuk_cinema/ui/login_page.dart';
-import 'package:gubuk_cinema/ui/registration_page.dart';
+import 'package:gubuk_cinema/models/drawer.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -58,38 +56,7 @@ class _DetailProfilePageState extends State<DetailProfilePage> {
           },
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              title: const Text("Log in"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Register"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Register(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("Tentang Aplikasi"),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: const DrawerSide(),
       body: ListView(
         scrollDirection: Axis.vertical,
         children: <Widget>[
