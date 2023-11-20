@@ -220,7 +220,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
                   ElevatedButton(
                     onPressed: () {
                       if (status == 'logged') {
-                        _addBook(context, widget.idMovie);
+                        _addBook(widget.idMovieDatabase);
                       } else if (status == 'no_data'){
                         _showToast(context, 'Silahkan melakukan login terlebih dahulu');
                         Navigator.push(

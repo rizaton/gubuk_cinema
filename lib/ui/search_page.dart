@@ -295,7 +295,7 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       matchQuery = _searchResults
           .where((element) =>
-              element.title!.toLowerCase().contains(query.toLowerCase()))
+              element.title.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
     print(_searchResults
