@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/models/drawer.dart';
+import 'package:gubuk_cinema/widget/drawer.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

@@ -31,7 +31,7 @@ class _RegisterState extends State<Register> {
     };
 
     final String jsonData = jsonEncode(userData);
-    postAPIAccount(jsonData);
+    await registerAccount(jsonData);
   }
 
   @override

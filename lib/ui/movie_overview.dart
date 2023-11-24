@@ -93,7 +93,7 @@ class _OverviewMovieState extends State<OverviewMovie> {
         'bookmark': bookData,
       };
       final String jsonData = jsonEncode(userData);
-      await postAPIAccountUpdate(jsonData, paramsIDUser);
+      await accountUpdate(jsonData, paramsIDUser);
       await prefs.setStringList('bookmark', bookData);
       setState(() {
         buttonEnabled = false;
