@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/tools/future_tools.dart';
-// import 'package:gubuk_cinema/ui/home_page.dart';
 import 'package:gubuk_cinema/ui/page_home.dart';
 
 Future<void> main() async {
@@ -51,11 +50,11 @@ class _MyAppState extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: _isLoading
-          ? const Align(
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(),
-            )
-          : const PageHome(),
+        ? const Align(
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          )
+        : const PageHome(),
     );
   }
 }

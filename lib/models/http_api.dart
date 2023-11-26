@@ -15,6 +15,20 @@ Future<String> getMovies() async {
   }
 }
 
+Future<String> findMovie(params) async {
+  try {
+    final response = await http.get(Uri.https(envAPI(),'/api/movies',params));
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (e) {
+    throw Exception('Failed to make the request: $e');
+  }
+}
+
 Future<http.Response> getBookmark(params) async {
   try {
     final response = await http.get(Uri.https(envAPI(),'/api/bookmark',params));

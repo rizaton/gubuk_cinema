@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gubuk_cinema/models/http_api.dart';
 import 'package:gubuk_cinema/tools/future_tools.dart';
 import 'package:gubuk_cinema/ui/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageOverview extends StatefulWidget {
-  final int indexMovie;
+  final String idMovie;
 
   const PageOverview({
     super.key,
-    required this.indexMovie,
+    required this.idMovie,
   });
 
   @override
@@ -16,13 +20,14 @@ class PageOverview extends StatefulWidget {
 
 class _PageOverviewState extends State<PageOverview> {
   String status = 'false'; 
-  bool _isLoading = true;
+  late bool _isLoading;
   late bool _isEnabled;
 
   @override
   void initState() {
     super.initState();
-  
+    _isLoading = true;
+    _getData();
   }
 
   void _showToast(BuildContext context, String message) {
@@ -34,14 +39,61 @@ class _PageOverviewState extends State<PageOverview> {
     );
   }
 
-  Future<void> _addBook(String movieID) async {
+  Future<void> _getData() async {
+    var prefs = await SharedPreferences.getInstance();
 
+    bool login = await FutureTools().checkLogin()?? false;
+    if (login) {
+      setState(() {
+        status = 'logged';
+      });
+      var bookmarkList = prefs.getStringList('bookmark_id')?? [];
+      // ignore: iterable_contains_unrelated_type
+      if (bookmarkList.contains(widget.idMovie)) {
+        setState(() {
+          _isEnabled = false;
+        });
+      }
+      setState(() {
+        _isEnabled = true;
+      });
+    } else {
+      setState(() {
+        _isEnabled = true;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _addBook(String movieID) async {
+    setState(() {
+      _isLoading = true;
+    });
+    var prefs = await SharedPreferences.getInstance();
+
+    final idUser = prefs.getStringList('user')?[0];
+    List<String>? bookmarkList = prefs.getStringList('bookmark_movie');
+    bookmarkList?.add(movieID);
+
+    final Map<String, dynamic> queryParameters = {
+      "id_user": idUser,
+    };
+    final Map<String, dynamic> body = {
+      'bookmark_movie': bookmarkList,
+    };
+    postBookmark(jsonEncode(body), queryParameters);
+    // ignore: use_build_context_synchronously
+    _showToast(context, 'Data buku berhasil ditambahkan');
+    setState(() {
+      _isLoading = false;
+      _isEnabled = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: FutureTools().fetchMovie(widget.indexMovie),
+      future: FutureTools().fetchMovie(widget.idMovie,''),
       builder: (context,snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
@@ -152,7 +204,7 @@ class _PageOverviewState extends State<PageOverview> {
                         : ElevatedButton(
                           onPressed: _isEnabled ? () {
                             if (status == 'logged') {
-                              _addBook(snapshot.data![2]);
+                              _addBook(snapshot.data![1]);
                             } else if (status == 'false'){
                               _showToast(context, 'Silahkan melakukan login terlebih dahulu');
                               Navigator.push(

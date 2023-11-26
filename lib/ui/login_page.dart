@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gubuk_cinema/models/http_api.dart';
 import 'package:gubuk_cinema/ui/page_home.dart';
-// import 'package:gubuk_cinema/ui/page_home.dart';
-// import 'package:gubuk_cinema/ui/home_page.dart';
 import 'package:gubuk_cinema/ui/registration_page.dart';
-// import 'package:gubukcinema/ui/home_page.dart';
-// import 'package:gubukcinema/ui/registration_page.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +25,16 @@ class _Login extends State<Login> {
       isLoading = true;
       errorMessage = '';
     });
-    
+
+    if (usernameController.text.isEmpty) {
+      setState(() {errorMessage = 'Username tidak boleh kosong';});
+      isLoading = false;
+      return;}
+    if (passwordController.text.isEmpty) {
+      setState(() {errorMessage = 'Password tidak boleh kosong';});
+      isLoading = false;
+      return;}
+
     try{
         String body = jsonEncode({
           'username' : usernameController.text,
@@ -56,7 +61,7 @@ class _Login extends State<Login> {
           List<String> jsonBookmarks = (mapJson['bookmark_movie'] as List).map((item) => item as String).toList();
 
           await prefs.setString('bookmark_id', mapJson['_id']);
-          await prefs.setStringList('bookmark_id', jsonBookmarks );
+          await prefs.setStringList('bookmark_movie', jsonBookmarks );
           // ignore: use_build_context_synchronously
           Navigator.pushReplacement(context, 
               MaterialPageRoute(builder: (context) => const PageHome()));
@@ -87,6 +92,7 @@ class _Login extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Gubuk Cinema"),
+        backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -163,10 +169,10 @@ class _Login extends State<Login> {
   _tombolLogin(){
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.grey,
         shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
-        side: const BorderSide(color: Colors.blue),
+        side: const BorderSide(color: Colors.grey),
         ),
         elevation: 10,
         minimumSize: const Size(200, 50)

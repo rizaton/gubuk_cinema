@@ -1,7 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import 'package:gubuk_cinema/tools/future_tools.dart';
 import 'package:gubuk_cinema/ui/page_overview.dart';
+import 'package:gubuk_cinema/ui/page_search.dart';
 import 'package:gubuk_cinema/widget/drawer.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class PageHome extends StatefulWidget {
   
@@ -12,10 +19,29 @@ class PageHome extends StatefulWidget {
 }
 
 class _PageHomeState extends State<PageHome> {
+  late int lenMovies;
+  bool _isLoading = true;
+
+  @override
+  void initState(){
+    super.initState();
+    _isLoading = true;
+    _getLenMovie();
+  }
+  
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = TextEditingController();
-    return Scaffold(
+    final int currentCount = (MediaQuery.of(context).size.width ~/ 250).toInt();
+    const int minCount = 2;
+    
+    TextEditingController searchMovieController = TextEditingController();
+
+    return _isLoading?
+    const Align(
+      alignment: Alignment.center,
+      child: CircularProgressIndicator(),
+    )
+    : Scaffold (
       body: CustomScrollView(
         slivers: <Widget>[
           const SliverAppBar(
@@ -46,7 +72,7 @@ class _PageHomeState extends State<PageHome> {
                       child: Container(
                         color: Colors.white,
                         child: TextFormField(
-                          controller: searchController,
+                          controller: searchMovieController,
                           enabled: true,
                           decoration: const InputDecoration(
                             hintText: 'Cari Judul Film...',
@@ -64,7 +90,7 @@ class _PageHomeState extends State<PageHome> {
                               MaterialStatePropertyAll(Colors.grey),
                         ),
                         onPressed: () {
-                          
+                          _searchMovie(searchMovieController.text);
                         },
                         child: const Text('Cari'),
                       ),
@@ -74,24 +100,45 @@ class _PageHomeState extends State<PageHome> {
               ),
             ),
             pinned: true,
-          ),
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 4.0,
+          ),SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              // crossAxisSpacing: 4.0,
+              // mainAxisSpacing: 4.0,
+              // childAspectRatio: 0.5,
+              // crossAxisCount: 2,
+              crossAxisCount: max(currentCount, minCount),
               childAspectRatio: 0.5,
-              crossAxisCount: 2,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 return _Card(index);
               },
-              childCount: 14,
+              childCount: lenMovies,
             ),
           ),
         ],
       ),
       drawer: const DrawerSide(),
+    );
+  }
+  Future<void> _getLenMovie() async{
+    var prefs = await SharedPreferences.getInstance();
+    List<String> lenMovie = prefs.getStringList('moviedb_id')??[];
+    setState(() {
+      lenMovies = lenMovie.length;
+      _isLoading = false;
+    });
+  }
+
+  void _searchMovie (String text){
+    String textSearch = text;
+    Navigator.push(
+      context, 
+      MaterialPageRoute(
+        builder: (context) => PageSearch(searchTextQuery: textSearch)
+      )
     );
   }
 }
@@ -103,7 +150,7 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: FutureTools().fetchMovie(indexMovie),
+      future: FutureTools().fetchMovie('','$indexMovie'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return InkWell(
@@ -113,7 +160,7 @@ class _Card extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PageOverview(indexMovie: indexMovie)
+                  builder: (context) => PageOverview(idMovie: snapshot.data![1])
                 ),
               );
             },
@@ -125,6 +172,23 @@ class _Card extends StatelessWidget {
                   child: Image.network(
                     snapshot.data![14],
                     fit: BoxFit.cover,
+                    loadingBuilder: (
+                      BuildContext context, 
+                      Widget child, 
+                      ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Text('Failed to load Image');
+                    },
                   ),
                 ),
                 Flexible(
@@ -148,7 +212,7 @@ class _Card extends StatelessWidget {
         }
         return const Align(
           alignment: Alignment.center,
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: Colors.black),
         );
       }
     );
