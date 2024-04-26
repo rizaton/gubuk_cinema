@@ -209,7 +209,7 @@ class _PageOverviewState extends State<PageOverview> {
                                           padding: const EdgeInsets.all(8),
                                           child: Column(
                                             children: [
-                                              Padding(
+                                              const Padding(
                                                 padding: EdgeInsets.only(
                                                     right: 20, left: 20),
                                                 child: Text(
@@ -221,20 +221,20 @@ class _PageOverviewState extends State<PageOverview> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     right: 20,
                                                     left: 20,
                                                     top: 10),
                                                 child: Text(
                                                   snapshot.data![8],
-                                                  style: TextStyle(),
+                                                  style: const TextStyle(),
                                                 ),
                                               )
                                             ],
                                           ),
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         flex:
                                             3, // Set flex untuk memberikan proporsi lebar
@@ -255,7 +255,8 @@ class _PageOverviewState extends State<PageOverview> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(top: 10),
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
                                               child: Wrap(
                                                 spacing:
                                                     10, // Jarak horizontal antara elemen
@@ -267,7 +268,7 @@ class _PageOverviewState extends State<PageOverview> {
                                                       .length,
                                                   (index) => Container(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 8,
                                                         vertical: 4),
                                                     decoration: BoxDecoration(
@@ -357,7 +358,7 @@ class _PageOverviewState extends State<PageOverview> {
                                               fontWeight: FontWeight.bold),
                                         )),
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             right: 20,
                                             left: 20,
                                             top: 10,
@@ -377,7 +378,7 @@ class _PageOverviewState extends State<PageOverview> {
                                               fontWeight: FontWeight.bold),
                                         )),
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             right: 20, left: 20, bottom: 20),
                                         child: Text(
                                             '\$${NumberFormat.decimalPattern().format(int.parse(snapshot.data![11]))} USD')),
