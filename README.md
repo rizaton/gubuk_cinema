@@ -32,4 +32,4 @@ A mobile cinema booking application built with **Flutter** (frontend) and **Next
 
 ---
 
-Made with ❤️ using Flutter & Next.js
+Made using Flutter & Next.js
