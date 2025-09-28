@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/models/drawer.dart';
+import 'package:gubuk_cinema/widget/drawer.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -108,21 +108,18 @@ class _DetailProfilePageState extends State<DetailProfilePage> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.grey
-                          ),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.grey),
                         ),
-                        onPressed: (){
+                        onPressed: () {
                           // Navigator.push(
                           //   context,
-                            
+
                           //   ),
-                        }, 
+                        },
                         child: const Text(
                           'Simpan',
-                          style: TextStyle(
-                            color: Colors.white
-                          ),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -166,21 +163,18 @@ class _DetailProfilePageState extends State<DetailProfilePage> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.grey
-                          ),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.grey),
                         ),
-                        onPressed: (){
+                        onPressed: () {
                           // Navigator.push(
                           //   context,
-                            
+
                           //   ),
-                        }, 
+                        },
                         child: const Text(
                           'Simpan',
-                          style: TextStyle(
-                            color: Colors.white
-                          ),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -231,21 +225,18 @@ class _DetailProfilePageState extends State<DetailProfilePage> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.grey
-                          ),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.grey),
                         ),
-                        onPressed: (){
+                        onPressed: () {
                           // Navigator.push(
                           //   context,
-                            
+
                           //   ),
-                        }, 
+                        },
                         child: const Text(
                           'Simpan',
-                          style: TextStyle(
-                            color: Colors.white
-                          ),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),

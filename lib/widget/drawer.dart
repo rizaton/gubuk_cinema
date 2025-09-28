@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gubuk_cinema/tools/future_tools.dart';
 import 'package:gubuk_cinema/ui/bookmark_page.dart';
 import 'package:gubuk_cinema/ui/login_page.dart';
 import 'package:gubuk_cinema/ui/profile_page.dart';
@@ -13,8 +14,9 @@ class DrawerSide extends StatefulWidget {
 }
 
 class _DrawerSideState extends State<DrawerSide> {
-  String status = 'no_data';
   String name = '';
+  bool _isLoading = true;
+  bool _login = false;
 
   @override
   void initState() {
@@ -24,18 +26,31 @@ class _DrawerSideState extends State<DrawerSide> {
 
   Future<void> _statusLogged() async {
     final prefs = await SharedPreferences.getInstance();
-    final nameState = prefs.getStringList('user')?[1];
-    if (prefs.get('logged') == 'true') {
+    final nameState = prefs.getStringList('user')?[2];
+    final bool getLogin = prefs.getBool('login')?? false;
+    if (getLogin) {
       setState(() {
-        status = 'logged';
         name = nameState!;
+        _isLoading = false;
+        _login = true;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (status == 'logged') {
+    if(_isLoading){
+      return const Scaffold(
+        body: Align(
+          alignment: Alignment.center,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else if (_login) {
       return _DrawerLogged(name);
     } else {
       return const _DrawerNoLogged();
@@ -106,19 +121,6 @@ class _DrawerLogged extends StatelessWidget {
 
   const _DrawerLogged(this.name);
 
-  Future<void> _loggedOut() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('user', [
-      '_ids',
-      'name',
-      'unam',
-      'pass',
-      'mail',
-    ]);
-    await prefs.setStringList('bookmark', []);
-    await prefs.setString('logged', 'false');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -178,7 +180,7 @@ class _DrawerLogged extends StatelessWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
-              _loggedOut();
+              FutureTools().resetData();
               Navigator.pop(context);
             },
           ),

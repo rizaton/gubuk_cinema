@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gubuk_cinema/ui/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gubuk_cinema/tools/future_tools.dart';
+import 'package:gubuk_cinema/ui/page_home.dart';
 
-void main() => runApp(const RunApplication());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const RunApplication());
+}
 
 class RunApplication extends StatelessWidget {
   const RunApplication({super.key});
@@ -13,7 +16,6 @@ class RunApplication extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class MyApp extends StatefulWidget {
   const MyApp({super.key,});
 
@@ -22,26 +24,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool _isLoading = true;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _initialData();
+    _loadData();
   }
 
-  Future<void> _initialData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('user',[
-        '_ids',
-        'name',
-        'unam',
-        'pass',
-        'mail',
-      ]
-    );
-    await prefs.setStringList('bookmark',[]);
-    await prefs.setString('logged', 'false');
-    await prefs.setStringList('MovieData', []);
+  Future<void> _loadData() async {
+    await FutureTools().dataFetch();
+    await FutureTools().resetData();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -53,7 +49,12 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.black,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const HomePage(),
+      home: _isLoading
+        ? const Align(
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          )
+        : const PageHome(),
     );
   }
 }

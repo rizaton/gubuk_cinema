@@ -269,7 +269,7 @@ class _SearchPageState extends State<SearchPage> {
       _isLoading = true;
     });
     /// Note : hilangkan parameter pada getAPIMovies() jika di http_api.dart tidak menerima parameter
-    var uri = await getAPIMovies(); 
+    var uri = await getMovies(); 
     List<dynamic> results = json.decode(uri);
     if (results != []) {
       setState(() {
